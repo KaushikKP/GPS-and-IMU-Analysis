@@ -1,0 +1,9 @@
+corrected_mag_yaw=yaw;
+for i=1:size(magx_soft)
+corrected_mag_yaw(i+2699)=atan2((magx_soft(i)),(magy_soft(i)));
+end
+
+%figure;
+plot(yaw);
+
+plot(corrected_mag_yaw);

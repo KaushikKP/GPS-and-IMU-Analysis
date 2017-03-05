@@ -1,0 +1,12 @@
+package exlcm;
+
+struct gps_message
+{
+    int64_t  timestamp;
+    int64_t  gpstime;
+    double   latitude;
+    double   longitude;
+    double   altitude;
+    double   easting;
+    double   northing;
+}

@@ -1,0 +1,13 @@
+
+
+package exlcm;
+
+struct example_t
+{
+string time;
+string latitude;
+string lat_direction;
+string longitude;
+string long_direction;
+string altitude;
+}

@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# for NBOSI-CT sensor (seabed 125)
+
+import sys
+import lcm
+import time
+import serial
+from exlcm import example_t
+import utm
+lc = lcm.LCM()
+#fi = open("dump-error.txt","w")
+def dms2dd(degrees, minutes, direction):
+    dd = float(degrees) + float(minutes)/60
+    if direction == 'S' or direction =='W':
+       dd*=-1
+    return dd
+
+class gps(object):
+    def __init__(self, port_name):
+        self.port = serial.Serial(port_name, 4800, timeout=1.)  # 9600-N-8-1
+        self.lcm = lcm.LCM("udpm://?ttl=12")
+        self.packet = example_t()
+        #while True:
+        print 'GPS: Initialization'
+
+
+    def readloop(self):
+        while True:
+            line = self.port.readline()
+            lati = ''
+            longi = ''
+            
+            gpsval = line.split(',')
+            if gpsval[0]=="$GPGGA":
+                  self.packet.time = time.time()*1e6
+                  self.packet.gpstime = gpsval[1]
+                  if len(gpsval)>2 and gpsval[2]!='':
+                    if len(gpsval)>3 and gpsval[3]!='':
+			  lati=gpsval[2]
+			  self.packet.latitude=dms2dd(lati[0:2],lati[2:],gpsval[3])
+                  if len(gpsval)>4 and gpsval[4]!='':
+                    if len(gpsval)>5 and gpsval[5]!='':
+			  longi=gpsval[4]
+			  self.packet.longitude=dms2dd(longi[0:2],longi[2:],gpsval[5])
+                  if len(gpsval)>9 and gpsval[9]!='':
+                    self.packet.altitude = gpsval[9]
+
+
+                  utm_x = 0.00
+                  utm_y = 0.00
+
+
+                  utm_xy = utm.from_latlon(self.packet.latitude,self.packet.longitude)
+                  self.packet.easting = gpsval[0]
+                  self.packet.northing = gpsval[1]
+        	  #print "(utm_x =",
+                  #print gpsval[0],
+                  #print ","
+                  #print "utm_y =",
+                  #print gpsval[1],
+                  #print ")"
+
+                  print 'Time: %06i  Lat: %.4f  Lon: %.4f Alt: %.4f Easting: %.4f  Northing: %.4f' %(self.packet.gpstime, self.packet.latitude, self.packet.longitude, self.packet.altitude,self.packet.easting, self.packet.northing)
+                  #fi.write("("+str(gpsval[0])+","+str(gpsval[1])+")"+"\n")
+
+                  lc.publish("GPS", self.packet.encode())
+#	fi.close()
+
+        
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print "Usage: %s <serial_port>\n" % sys.argv[0]
+        sys.exit(0)
+    mygps = gps(sys.argv[1])
+    mygps.readloop()

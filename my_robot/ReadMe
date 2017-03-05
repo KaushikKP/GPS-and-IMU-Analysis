@@ -1,0 +1,32 @@
+//Home-Work - 5
+
+--Inclusions--
+Folder Name: python_codes
+
+1) utmconv.py - gps driver
+2) imudr.py - imu driver
+3) gpsrun1.sh - gps run file
+4) imurun.sh - imu run file
+5) devicedr.sh - both imu and gps run file
+6) gentypes.sh
+
+Folder Name: matlab_codes
+
+1) getvalueimu.m - getting imu values
+2) getvaluegps.m - getting gps values
+3) hard_iron.m - hard iron effects
+4) soft_iron.m - soft iron effects
+5) yaw_rate_integration.m - integration of yaw rate sensor
+6) corrected_yaw.m - magnetometer yaw correction
+7) trajectory.m - vehicle trajectory
+
+Folder Name: lcmtypes
+
+1) example_t.lcm - gps_message struct
+2) imu.lcm - imu_message struct
+
+Folder Name: logfiles_gps_imu - contains all the log files
+
+Folder Name: csv_and_docs - contains all *.csv files
+
+Folder Name: pics - contains all required pictures
